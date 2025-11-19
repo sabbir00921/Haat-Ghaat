@@ -11,8 +11,6 @@ cloudinary.config({
 
 // upload cloudinary
 exports.uploadCloudinary = async (filepath) => {
-  console.log(filepath);
-
   try {
     if (!filepath || !fs.existsSync(filepath))
       throw new customError(401, "Image path missing");

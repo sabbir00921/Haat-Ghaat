@@ -3,9 +3,13 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const { customError } = require("../utils/customError");
 const userModel = require("../model/user.model");
 const crypto = require("crypto");
-const { verifyEmailTemplate } = require("../templates/emailtemplate");
+const {
+  verifyEmailTemplate,
+  passwordResetOtpTemplate,
+} = require("../templates/emailtemplate");
 const { mailer } = require("../helper/nodemailer");
 const { uploadCloudinary } = require("../helper/cloudinary");
+const jwt = require("jsonwebtoken");
 
 exports.createUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
@@ -94,7 +98,7 @@ exports.loginUser = asyncHandler(async (req, res) => {
     maxAge: 15 * 60 * 1000, // 15 minutes
   };
 
-  // res.cookie("accessToken", accessToken, cookieOption);
+  res.cookie("accessToken", accessToken, cookieOption);
   res.cookie("refreshToken", user.refreshToken, cookieOption);
 
   apiResponse.success(res, 200, "User logged in successfully", {
@@ -123,8 +127,6 @@ exports.updateUserImage = asyncHandler(async (req, res) => {
 exports.updateUserdetails = asyncHandler(async (req, res) => {
   const userId = req.user;
   const { name, phone, address } = req.body;
-  if (!name || !phone)
-    throw new customError(401, "Updated info missing");
   const user = await userModel.findOneAndUpdate(
     { _id: userId },
     {
@@ -151,4 +153,89 @@ exports.logoutUser = asyncHandler(async (req, res) => {
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
   apiResponse.success(res, 200, "User logged out successfully");
+});
+
+// Forget password
+exports.forgetPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const user = await userModel.findOne({ email: email });
+  if (!user) throw new customError(401, "User not found");
+
+  //  sent otp for password reset
+  const otp = crypto.randomInt(1000, 9999);
+  user.forgotPasswordOtp = otp;
+  user.forgotPasswordOtpExpiry = Date.now() + 2 * 60 * 1000;
+  await user.save();
+
+  // verify email logic can be added here
+  const resetPasswordTemplate = passwordResetOtpTemplate(
+    user.name,
+    user.forgotPasswordOtp
+  );
+
+  const sentOtp = await mailer(
+    "Otp for reset password",
+    resetPasswordTemplate,
+    user.email
+  );
+
+  await user.save();
+  apiResponse.success(
+    res,
+    201,
+    "Password reset otp sent successfull",
+    user.name
+  );
+});
+// reset password
+exports.resetPassword = asyncHandler(async (req, res) => {
+  const { email, password, otp } = req.body;
+  console.log(email);
+  const user = await userModel.findOne({ email: email });
+  if (!user) throw new customError(401, "User not found");
+
+  if (user.forgotPasswordOtp !== otp) {
+    throw new customError(400, "Invalid OTP.");
+  }
+  if (user.forgotPasswordOtpExpiry < Date.now()) {
+    throw new customError(400, "OTP has expired.");
+  }
+  const isSamePassword = await user.comparePassword(password);
+  if (isSamePassword) throw new customError(401, "New password cannot be old");
+  user.password = password;
+  user.forgotPasswordOtp = null;
+  user.forgotPasswordOtpExpiry = null;
+  await user.save();
+  apiResponse.success(res, 201, "Password reset successfull", user.name);
+});
+
+// refresh token controller
+exports.refreshToken = asyncHandler(async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) throw new customError(401, "Invalid token");
+
+  const verifyToken = jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET
+  );
+  if (!refreshToken) throw new customError(401, "Token expired");
+  const userId = verifyToken?.id;
+  const user = await userModel.findOne({ _id: userId });
+
+  // Generate access token and send to client
+  const accessToken = user.generateAccessToken();
+
+  // save cookie
+  const cookieOption = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+    maxAge: 15 * 60 * 1000, // 15 minutes
+  };
+
+  res.cookie("accessToken", accessToken, cookieOption);
+
+  apiResponse.success(res, 201, "New access Token is generated", {
+    accessToken,
+  });
 });

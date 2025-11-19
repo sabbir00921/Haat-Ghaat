@@ -15,5 +15,8 @@ _.route("/update-image").put(
 );
 _.route("/update-detail").put(authGuard, userController.updateUserdetails);
 _.route("/user-logout").post(authGuard, userController.logoutUser);
+_.route("/forget-password").post(userController.forgetPassword);
+_.route("/reset-password").post(userController.resetPassword);
+_.route("/refreshtoken-handler").post(userController.refreshToken);
 
 module.exports = _;

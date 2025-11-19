@@ -56,3 +56,54 @@ exports.verifyEmailTemplate = (name, email, otp, verifyUrl) => {
   </html>
   `;
 };
+
+exports.passwordResetOtpTemplate = (name, otp) => {
+  return `
+  <html>
+    <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+      <div style="max-width: 500px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 8px;
+                  box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+
+        <h2 style="text-align: center; color: #333;">Password Reset OTP</h2>
+
+        <p style="font-size: 15px; color: #555;">
+          Hello <strong>${name}</strong>,
+        </p>
+
+        <p style="font-size: 15px; color: #555;">
+          We received a request to reset the password for your account:
+        </p>
+
+        <p style="font-size: 15px; color: #555;">
+          Use the OTP below to reset your password.  
+          This OTP is valid for <strong>2 minutes</strong>.
+        </p>
+
+        <div style="text-align: center; margin: 25px 0;">
+          <h1 style="
+            display: inline-block;
+            background: #007bff;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 8px;
+            letter-spacing: 3px;
+          ">
+            ${otp}
+          </h1>
+        </div>
+
+        <p style="font-size: 13px; color: #777;">
+          If you did not request a password reset, please ignore this email.
+        </p>
+
+        <p style="font-size: 13px; color: #777; text-align: center; margin-top: 30px;">
+          © ${new Date().getFullYear()} Your Company Name. All rights reserved.
+        </p>
+
+      </div>
+    </body>
+  </html>
+  `;
+};
+
+
