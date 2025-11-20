@@ -6,6 +6,10 @@ const SummaryApi = {
     url: "/auth/create-user",
     method: "post",
   },
+  login: {
+    url: "/auth/user-login",
+    method: "post",
+  },
 };
 
 export default SummaryApi;
