@@ -3,6 +3,7 @@ import { FaRegEyeSlash, FaRegEye } from "react-icons/fa6";
 import toast from "../../utils/toast";
 import Axios from "../../utils/Axios";
 import SummaryApi from "../../common/SummaryApi";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const { ErrorToast, SuccessToast, InfoToast } = toast;
@@ -95,6 +96,14 @@ const Login = () => {
             >
               Login
             </button>
+            {/* signup Link */}
+
+            <p className="text-sm text-center mt-2">
+              Haven't an account?
+              <Link to="/register" className="text-blue-600 hover:underline">
+                Register now
+              </Link>
+            </p>
           </form>
         </div>
       </section>
