@@ -45,7 +45,7 @@ const Login = () => {
 
   return (
     <div>
-      <section className="container mx-auto px-2 ">
+      <section className="container mx-auto px-2 h-[85vh] flex items-center justify-center">
         <div className="bg-white my-4 w-full max-w-lg mx-auto rounded p-7">
           <p>Welcome Back</p>
 

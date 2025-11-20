@@ -4,6 +4,7 @@ import { FaRegEye } from "react-icons/fa6";
 import toast from "../../utils/toast";
 import Axios from "../../utils/Axios";
 import SummaryApi from "../../common/SummaryApi";
+import { Link } from "react-router-dom";
 
 const Signup = () => {
   const { ErrorToast, SuccessToast, InfoToast } = toast;
@@ -50,8 +51,8 @@ const Signup = () => {
   };
 
   return (
-    <div>
-      <section className="container mx-auto px-2 ">
+    <div className="">
+      <section className="container mx-auto px-2 h-[85vh] flex items-center justify-center">
         <div className="bg-white my-4 w-full max-w-lg mx-auto rounded p-7">
           <p>Welcome to Haat-Ghat</p>
           <form action="" className="grid gap-2 mt-6">
@@ -136,6 +137,14 @@ const Signup = () => {
               Register
             </button>
           </form>
+          {/* Login Link */}
+
+          <p className="text-sm text-center mt-2">
+            Have an account?
+            <Link to="/login" className="text-blue-600 hover:underline">
+              Login here
+            </Link>
+          </p>
         </div>
       </section>
     </div>
