@@ -3,12 +3,15 @@ const { customError } = require("../utils/customError");
 
 // Create a test account or replace with real credentials.
 const transporter = nodemailer.createTransport({
-  service: "smtp.gmail.com",
+  host: "smtp.gmail.com",
   port: 465,
   secure: true,
   auth: {
     user: process.env.HOST_MAIL,
     pass: process.env.APP_PASSWORD,
+  },
+  tls: {
+    rejectUnauthorized: false,
   },
 });
 
@@ -21,6 +24,7 @@ exports.mailer = async (subject, template, email) => {
       html: template,
     });
     // console.log(info.messageId);
+    return info;
   } catch (error) {
     throw new customError(500, "Email sending failed" + error.message);
   }
