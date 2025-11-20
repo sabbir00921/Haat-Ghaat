@@ -18,6 +18,7 @@ exports.createUser = asyncHandler(async (req, res) => {
   }
 
   const user = new userModel({ name, email, password });
+
   const otp = crypto.randomInt(1000, 9999);
   user.emailVerificationOTP = otp;
   user.emailVerificationOTPExpires = Date.now() + 10 * 60 * 1000;

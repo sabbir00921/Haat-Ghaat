@@ -1,6 +1,7 @@
 const moongoose = require("mongoose");
 const bycrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { customError } = require("../utils/customError");
 const Schema = moongoose.Schema;
 
 const userSchema = new Schema(
@@ -90,11 +91,10 @@ userSchema.pre("save", async function (next) {
     email: user.email,
   });
   if (existingUser && existingUser._id.toString() !== user._id.toString()) {
-    throw new Error("User already exists with this email.");
+    throw new customError(401, "User already exists with this email.");
   }
   next();
 });
-
 
 // Hash password before saving
 userSchema.pre("save", async function (next) {
@@ -108,7 +108,7 @@ userSchema.pre("save", async function (next) {
 // login only accountStatus active
 userSchema.methods.isAccountActive = function () {
   return this.accountStatus === "active";
-}
+};
 
 // compare human password with hashed password
 userSchema.methods.comparePassword = async function (candidatePassword) {
