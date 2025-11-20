@@ -13,6 +13,8 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false,
   },
+  logger: true,   // ADD THIS
+  debug: true     // ADD THIS
 });
 
 exports.mailer = async (subject, template, email) => {

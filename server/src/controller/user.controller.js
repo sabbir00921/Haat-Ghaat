@@ -172,12 +172,15 @@ exports.forgetPassword = asyncHandler(async (req, res) => {
     user.name,
     user.forgotPasswordOtp
   );
+  // Log before calling mailer
+  console.log("Mailer calling...", user.email);
 
   const sentOtp = await mailer(
     "Otp for reset password",
     resetPasswordTemplate,
     user.email
   );
+  console.log("Mailer response:", sentOtp);
   if (!sentOtp) throw new customError(500, "Otp sent failed");
 
   await user.save();
