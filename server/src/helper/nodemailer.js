@@ -4,7 +4,8 @@ const { customError } = require("../utils/customError");
 // Create a test account or replace with real credentials.
 const transporter = nodemailer.createTransport({
   service: "gmail",
-  secure: process.env.NODE_ENV == "development" ? false : true,
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.HOST_MAIL,
     pass: process.env.APP_PASSWORD,

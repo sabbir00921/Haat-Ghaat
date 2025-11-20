@@ -178,6 +178,7 @@ exports.forgetPassword = asyncHandler(async (req, res) => {
     resetPasswordTemplate,
     user.email
   );
+  if (!sentOtp) throw new customError(500, "Otp sent failed");
 
   await user.save();
   apiResponse.success(
