@@ -3,7 +3,7 @@ const { customError } = require("../utils/customError");
 
 // Create a test account or replace with real credentials.
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: "gmail",
   port: 465,
   secure: true,
   auth: {
@@ -13,8 +13,8 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false,
   },
-  logger: true,   // ADD THIS
-  debug: true     // ADD THIS
+  logger: true, // ADD THIS
+  debug: true, // ADD THIS
 });
 
 exports.mailer = async (subject, template, email) => {
