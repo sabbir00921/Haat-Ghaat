@@ -111,7 +111,10 @@ exports.loginUser = asyncHandler(async (req, res) => {
 // update user image
 exports.updateUserImage = asyncHandler(async (req, res) => {
   const { image } = req?.files;
+
   const userId = req.user;
+  console.log(userId);
+
   if (!image) throw new customError(401, "Image not found");
   const user = await userModel.findOne({ _id: userId });
 

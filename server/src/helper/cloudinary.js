@@ -10,20 +10,21 @@ cloudinary.config({
 });
 
 // upload cloudinary
-exports.uploadCloudinary = async (filepath) => {
+exports.uploadCloudinary = async (filePath) => {
   try {
-    if (!filepath || !fs.existsSync(filepath))
-      throw new customError(401, "Image path missing");
+    console.log(filePath);
 
-    // save into cloudinary
-    const cloudinaryResponse = await cloudinary.uploader.upload(filepath, {
+    if (!filePath || !fs.existsSync(filePath)) {
+      throw new customError(401, "image path missing");
+    }
+    // save in cloudinary
+    const cloudinaryResponse = await cloudinary.uploader.upload(filePath, {
       resource_type: "image",
       quality: "auto",
     });
-
-    // delete image from our local server
+    // Delete image from our server
     if (cloudinaryResponse) {
-      fs.unlinkSync(filepath);
+      fs.unlinkSync(filePath);
     }
 
     return {
@@ -31,8 +32,8 @@ exports.uploadCloudinary = async (filepath) => {
       secure_url: cloudinaryResponse.secure_url,
     };
   } catch (error) {
-    if (fs.existsSync(filepath)) {
-      fs.unlinkSync(filepath);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
     }
     throw new customError(500, "Failed to upload image" + error.messsage);
   }

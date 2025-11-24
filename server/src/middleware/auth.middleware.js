@@ -4,7 +4,7 @@ const { customError } = require("../utils/customError");
 exports.authGuard = async (req, res, next) => {
   try {
     const accesstoken =
-      req?.cookies?.accessToken
+      req?.cookies?.accessToken || req.authrization.accessToken
 
     // const refresstoken = req.headers?.cookie.replace("refreshToken=", "");
     if (!accesstoken) throw new customError(401, "Token not found");
